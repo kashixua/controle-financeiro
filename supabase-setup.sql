@@ -45,3 +45,22 @@ alter table public.shows enable row level security;
 alter table public.reservas enable row level security;
 alter table public.fechamentos enable row level security;
 alter table public.configuracoes enable row level security;
+
+
+-- POLITICAS RLS POR USUARIO
+-- Cada usuario autenticado so pode ler e alterar linhas cujo user_id seja o seu.
+do $$
+declare t text;
+begin
+  foreach t in array array['receitas','despesas','dividas','pagamentos','uber','shows','reservas','fechamentos','configuracoes']
+  loop
+    execute format('drop policy if exists "isolamento_usuario" on public.%I', t);
+    execute format('create policy "isolamento_usuario" on public.%I for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid())', t);
+  end loop;
+end $$;
+
+drop policy if exists "isolamento_usuario" on public.profiles;
+create policy "isolamento_usuario" on public.profiles
+for all to authenticated
+using (id = auth.uid())
+with check (id = auth.uid());
