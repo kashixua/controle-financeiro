@@ -5,6 +5,11 @@
 alter table public.configuracoes
   add column if not exists caixa_atual numeric(12,2) not null default 0;
 
+
+-- Competencia inicial das dividas/parcelamentos.
+alter table public.dividas
+  add column if not exists competencia_inicial date;
+
 -- Permissões mínimas para o cliente autenticado.
 grant usage on schema public to authenticated;
 grant select, insert, update, delete on table
