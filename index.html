@@ -15,7 +15,7 @@
 const SUPABASE_URL='https://fmzwmmyslqwoddeornbz.supabase.co';
 const SUPABASE_KEY='sb_publishable_iUM50TpsC6YsPlQLjDNwIA_ZUDBE8Dq';
 const $=id=>document.getElementById(id), br=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-let session=null, data={receitas:[],despesas:[],dividas:[],pagamentos:[],uber:[],shows:[],reservas:[],config:null}, deferredPrompt=null;const now=new Date();let viewYear=now.getFullYear(),viewMonth=now.getMonth();
+let session=null, data={receitas:[],despesas:[],dividas:[],pagamentos:[],uber:[],shows:[],reservas:[],config:null}, deferredPrompt=null;const now=new Date(),savedView=localStorage.getItem('cfViewMonth');let viewYear=savedView?Number(savedView.slice(0,4)):now.getFullYear(),viewMonth=savedView?Number(savedView.slice(5,7))-1:now.getMonth();
 const headers=(json=true)=>{const h={'apikey':SUPABASE_KEY};if(session?.access_token)h.Authorization='Bearer '+session.access_token;if(json)h['Content-Type']='application/json';return h};
 async function api(path,opt={}){const r=await fetch(SUPABASE_URL+path,{...opt,headers:{...headers(opt.body!==undefined),...(opt.headers||{})}});if(!r.ok){let msg=await r.text();throw new Error(msg||('Erro '+r.status))}if(r.status===204)return null;const t=await r.text();return t?JSON.parse(t):null}
 function msg(t,bad=false){$('loginMsg').textContent=t;$('loginMsg').className='small '+(bad?'danger':'good')}
